@@ -1,0 +1,51 @@
+<div class="container">
+  <br>
+  <h4><mark>Car:</mark> {{carName}}
+    <small>{{carModel}}</small></h4>
+  <div class="alert alert-success">
+    Car Properties:
+    <ul>
+      <li>Car Speed: <strong>{{carSpeed}}</strong> </li>
+      <li>Car Year: <strong>{{carYear}}</strong> </li>
+      <li>Car Color: <strong>{{colors.car}}</strong> </li>
+      <li>Car Salon Color: <strong>{{colors.salon}}</strong> </li>
+      <li>Car Wheel Color: <strong>{{colors.wheels}}</strong> </li>
+    </ul>
+    </div>
+  <h5>Car Refactor:</h5>
+  <button class="btn btn-danger" (click)="showEditForm()">Edit</button>
+  <br><br>
+  <form *ngIf="editForm">
+    <div class ="form-group">
+      <input type="text" class="form-control" placeholder="Car Name" [(ngModel)]="carName" name="name"> <br>
+      <input type="text" class="form-control" placeholder="Car Model" [(ngModel)]="carModel" name="model"> <br>
+      <input type="number" class="form-control" placeholder="Car Speed" [(ngModel)]="carSpeed" name="speed"> <br>
+      <input type="number" class="form-control" placeholder="Car Year" [(ngModel)]="carYear" name="year"> <br>
+      <input type="text" class="form-control" placeholder="Car Color" [(ngModel)]="colors.car" name="color"> <br>
+      <input type="text" class="form-control" placeholder="Car Salon Color" [(ngModel)]="colors.salon" name="salon"> <br>
+      <input type="text" class="form-control" placeholder="Car Wheel Color" [(ngModel)]="colors.wheels" name="wheel"> <br>
+    </div>
+  </form>
+
+  <h5>Car Functions:</h5>
+  <form (submit)="addCarFunction(option.value)">
+    <div class ="form-group">
+      <label for="option">Add new option</label>
+      <input type="text" class="form-control" id="option" #option placeholder="Write your option here">
+      <br>
+      <button type="button" class="btn btn-outline-success" (click)="addCarFunction(option.value)">Add</button>
+    </div>
+  </form>
+
+  <div class="alert alert-warning">
+    <ul>
+      <li *ngFor="let item of carFunctions"> {{item}} <button class="btn btn-danger btn-sm" (click)="deleteCarFunction(item)">X</button></li>
+    </ul>
+  </div>
+
+  <h5>Choose Car:</h5>
+  <button class="btn btn-success" (click)="CarOption('BMW')">BMW</button>
+  <button class="btn btn-primary" (click)="CarOption('Mercedes')">Mercedes</button>
+  <button class="btn btn-info" (click)="CarOption('Audi')">Audi</button>
+
+</div>
