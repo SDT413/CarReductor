@@ -1,22 +1,53 @@
-import { Component} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CarService } from './car.service';
+import { Car } from "./car";
+import {Feature} from "./feature";
+
 
 @Component({
   selector: 'app-car',
   templateUrl: './car.component.html',
   styleUrls: ['./car.component.css']
 })
-export class CarComponent {
-  private _carName:string = 'BMW';
-  private _carYear:number = 2017;
-  private _carModel:string = 'X5';
-  private _carSpeed:number = 250;
+export class CarComponent implements OnInit {
+  private _cars:Car[] = [];
+  private _carID:number = 0;
+  private _carName:string = '';
+  private _carYear:number = 0;
+  private _carModel:string = '';
+  private _carSpeed:number = 0;
   private _colors:IColors = {
-    car: 'white',
-    salon: 'black',
-    wheels: 'silver'
+    car: '',
+    salon: '',
+    wheels: ''
   };
-  private _carFunctions:string[] = ['Start', 'Stop', 'Drive'];
+  public _carFeatures:Feature[] = [];
   private _editForm:boolean = false;
+  constructor(private carService: CarService) {
+  }
+  ngOnInit(): void {
+    this.carService.getCars().subscribe(cars => {
+      this._cars = cars;
+      this._carID = cars[0].id;
+      this._carName = cars[0].name;
+      this._carYear = cars[0].year;
+      this._carModel = cars[0].model;
+      this._carSpeed = cars[0].speed;
+      this._colors = {
+        car: cars[0].car_color,
+        salon: cars[0].salon_color,
+        wheels: cars[0].wheels_color
+      }
+      this.carService.getCarFeatures(cars[0].id).subscribe(features => {
+        this._carFeatures = features;
+      });
+  });
+
+}
+
+  refreshPage() {
+    location.reload();
+  }
   get carName(): string {
     return this._carName;
   }
@@ -53,73 +84,59 @@ export class CarComponent {
     return this._colors;
   }
 
-  set colors(value: IColors) {
-    this._colors = value;
-  }
-
-  get carFunctions(): string[] {
-    return this._carFunctions;
-  }
-
-  set carFunctions(value: string[]) {
-    this._carFunctions = value;
-  }
-
-
   get editForm(): boolean {
     return this._editForm;
   }
-
-  set editForm(value: boolean) {
-    this._editForm = value;
+  get cars(): string[] {
+    let cars:string[] = [];
+    for (let i = 0; i < this._cars.length; i++) {
+      cars.push(this._cars[i].name);
+    }
+    return cars;
   }
+  get carFeatures(): string[] {
+    let features:string[] = [];
+    for (let i = 0; i < this._carFeatures.length; i++) {
+      features.push(this._carFeatures[i].feature);
+    }
+    return features;
+  }
+
 
   CarOption(carName:string) {
-   if (carName === 'BMW') {
-     this._carName = 'BMW';
-     this._carYear = 2017;
-     this._carModel = 'X5';
-     this._carSpeed = 250;
-     this._colors = {
-       car: 'white',
-       salon: 'black',
-       wheels: 'silver'
-     };
+    this.cars.forEach((value, index) => {
+      if (value === carName) {
+        this._carID = this._cars[index].id;
+        this._carName = this._cars[index].name;
+        this._carYear = this._cars[index].year;
+        this._carModel = this._cars[index].model;
+        this._carSpeed = this._cars[index].speed;
+        this._colors = {
+          car: this._cars[index].car_color,
+          salon: this._cars[index].salon_color,
+          wheels: this._cars[index].wheels_color
 
-   }
-    else if (carName === 'Audi') {
-      this._carName = 'Audi';
-      this._carYear = 2015;
-      this._carModel = 'A8';
-      this._carSpeed = 240;
-      this._colors = {
-        car: 'black',
-        salon: 'white',
-        wheels: 'silver'
-      };
-   }
-    else if (carName === 'Mercedes') {
-      this._carName = 'Mercedes';
-      this._carYear = 2016;
-      this._carModel = 'S500';
-      this._carSpeed = 260;
-      this._colors = {
-        car: 'silver',
-        salon: 'black',
-        wheels: 'silver'
-      };
-   }
+        }
+        this._carFeatures = this._cars[index].features;
+      }
+    });
   }
-
-  addCarFunction(value: string):boolean {
-    this._carFunctions.push(value);
-    return false;
+  deleteFeature(option: string):void {
+    for (let i = 0; i < this._carFeatures.length; i++) {
+      if (this._carFeatures[i].feature === option) {
+        this.carService.deleteCarFeature(this._carID,this._carFeatures[i].id).subscribe(
+          () => this._carFeatures.splice(i, 1)
+        );
+        break;
+      }
+    }
   }
-
-  deleteCarFunction(option: string):void {
-    for (let i = 0; i < this._carFunctions.length; i++) {
-      if (this._carFunctions[i] === option) {
-        this._carFunctions.splice(i, 1);
+  deleteCar(carName: string):void {
+    for (let i = 0; i < this._cars.length; i++) {
+      if (this._cars[i].name === carName) {
+        this.carService.deleteCar(this._cars[i].id).subscribe(
+          () => this._cars.splice(i, 1)
+        );
         break;
       }
     }
@@ -128,6 +145,49 @@ export class CarComponent {
   showEditForm():void {
      this._editForm = !this._editForm;
   }
+  UpdateCar():void {
+    this.carService.updateCar({
+      id: this._carID,
+      name: this._carName,
+      year: this._carYear,
+      model: this._carModel,
+      speed: this._carSpeed,
+      car_color: this._colors.car,
+      salon_color: this._colors.salon,
+      wheels_color: this._colors.wheels,
+      features: this._carFeatures
+    }).subscribe(car => {
+      this._cars.push(car);
+    });
+    this.refreshPage();
+  }
+
+  SaveCar():void {
+      this.carService.addCar({
+        id: 0,
+        name: this._carName,
+        year: this._carYear,
+        model: this._carModel,
+        speed: this._carSpeed,
+        car_color: this._colors.car,
+        salon_color: this._colors.salon,
+        wheels_color: this._colors.wheels,
+        features: this._carFeatures
+    }).subscribe(car => {
+      this._cars.push(car);
+    });
+    this.refreshPage();
+  }
+  addCarFeature(option: string):void {
+  let feature : Feature = {
+      feature: option
+    } as Feature;
+    this.carService.addCarFeature(this._carID,feature).subscribe(feature => {
+      this._carFeatures.push(feature);
+    });
+    this.refreshPage();
+  }
+
 }
 interface IColors {
   car: string,

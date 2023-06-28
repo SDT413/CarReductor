@@ -7,6 +7,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CarComponent } from './components/car/car.component';
 import { ContactsComponent } from './components/contacts/contacts.component';
+import { CarService } from './components/car/car.service';
+import {HttpClientModule} from "@angular/common/http";
 
 const appRoutes: Routes = [
   {path: '', component: CarComponent},
@@ -20,11 +22,12 @@ const appRoutes: Routes = [
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     FormsModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [],
+  providers: [CarService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

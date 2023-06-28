@@ -14,6 +14,8 @@
     </div>
   <h5>Car Refactor:</h5>
   <button class="btn btn-danger" (click)="showEditForm()">Edit</button>
+  <button type="submit" class="btn btn-success" (click)="UpdateCar()">Save</button>
+  <button type="submit" class="btn btn-info" (click)="SaveCar()">Add new car</button>
   <br><br>
   <form *ngIf="editForm">
     <div class ="form-group">
@@ -27,25 +29,24 @@
     </div>
   </form>
 
-  <h5>Car Functions:</h5>
-  <form (submit)="addCarFunction(option.value)">
+  <h5>Car Features:</h5>
+  <form (submit)="addCarFeature(option.value)">
     <div class ="form-group">
       <label for="option">Add new option</label>
       <input type="text" class="form-control" id="option" #option placeholder="Write your option here">
       <br>
-      <button type="button" class="btn btn-outline-success" (click)="addCarFunction(option.value)">Add</button>
+      <button type="button" class="btn btn-outline-success" (click)="addCarFeature(option.value)">Add</button>
     </div>
   </form>
 
   <div class="alert alert-warning">
     <ul>
-      <li *ngFor="let item of carFunctions"> {{item}} <button class="btn btn-danger btn-sm" (click)="deleteCarFunction(item)">X</button></li>
+      <li id="featuresList" *ngFor="let item of carFeatures"> {{item}} <button class="btn btn-danger btn-sm" (click)="deleteFeature(item)">X</button></li>
     </ul>
   </div>
 
   <h5>Choose Car:</h5>
-  <button class="btn btn-success" (click)="CarOption('BMW')">BMW</button>
-  <button class="btn btn-primary" (click)="CarOption('Mercedes')">Mercedes</button>
-  <button class="btn btn-info" (click)="CarOption('Audi')">Audi</button>
-
+  <ul>
+    <li *ngFor="let car of cars"> <button class="btn btn-primary" (click)="CarOption(car)">{{car}}</button> <button class="btn btn-danger btn-sm" (click)="deleteCar(car)">X</button></li>
+  </ul>
 </div>
