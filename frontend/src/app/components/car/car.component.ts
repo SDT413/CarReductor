@@ -44,10 +44,6 @@ export class CarComponent implements OnInit {
   });
 
 }
-
-  refreshPage() {
-    location.reload();
-  }
   get carName(): string {
     return this._carName;
   }
@@ -159,7 +155,6 @@ export class CarComponent implements OnInit {
     }).subscribe(car => {
       this._cars.push(car);
     });
-    this.refreshPage();
   }
 
   SaveCar():void {
@@ -176,7 +171,6 @@ export class CarComponent implements OnInit {
     }).subscribe(car => {
       this._cars.push(car);
     });
-    this.refreshPage();
   }
   addCarFeature(option: string):void {
   let feature : Feature = {
@@ -185,7 +179,6 @@ export class CarComponent implements OnInit {
     this.carService.addCarFeature(this._carID,feature).subscribe(feature => {
       this._carFeatures.push(feature);
     });
-    this.refreshPage();
   }
 
 }
